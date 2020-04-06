@@ -19,14 +19,4 @@ RUN apt-get install -y locales && \
 COPY load_models.py /app/
 RUN python3 /app/load_models.py
 
-RUN pip3 install streamlit
-RUN pip3 install sklearn
-RUN pip3 install xnat
-RUN pip3 install dicom2nifti
-
 COPY start.py /app/start.py
-COPY main.py /app/main.py
-COPY plotter/__init__.py /app/plotter/__init__.py
-COPY plotter/generateHUplots.py /app/plotter/generateHUplots.py
-COPY lung.png /app/lung.png
-COPY seg.png /app/seg.png
