@@ -19,4 +19,6 @@ RUN apt-get install -y locales && \
 COPY load_models.py /app/
 RUN python3 /app/load_models.py
 
+RUN pip3 install SimpleITK
+
 COPY start.py /app/start.py
