@@ -78,8 +78,9 @@ def run_lungmask(param_dict):
     model = lungmask.get_model('unet', model_name)
 
     log_debug("Got model")
-
-    input_image = utils.get_input_image(download_dir)
+    data_share = os.environ["DATA_SHARE_PATH"]
+    abs_source_dir = os.path.join(data_share, download_dir)
+    input_image = utils.get_input_image(abs_source_dir)
 
     segmentation = lungmask.apply(input_image, model, force_cpu=False, batch_size=20, volume_postprocessing=False)
 
@@ -89,7 +90,6 @@ def run_lungmask(param_dict):
     result_dict = {}
 
     # saving segmentation to file
-    data_share = os.environ["DATA_SHARE_PATH"]
     rel_seg_save_path = "{}-segmentation".format(os.environ["LUNGMASK_HOSTNAME"])
     seg_save_path = os.path.join(data_share, rel_seg_save_path)
 
