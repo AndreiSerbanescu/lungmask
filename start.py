@@ -9,6 +9,7 @@ from lungmask import lungmask
 from lungmask import utils
 import SimpleITK as sitk
 import numpy as np
+import json
 
 class CommandRequestHandler(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -16,7 +17,9 @@ class CommandRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text")
         self.end_headers()
 
-        self.__requested_method = {"/please_segment": run_lungmask}
+        self.__requested_method = {
+            "/lungmask_segment": run_lungmask
+        }
 
 
     def do_GET(self):
@@ -36,20 +39,13 @@ class CommandRequestHandler(BaseHTTPRequestHandler):
         # called lungmask
 
         print("running lungmask")
-        result = self.__requested_method[parsed_url.path](parsed_params)
+        result_dict = self.__requested_method[parsed_url.path](parsed_params)
         # serialised_result = json.dumps(result.tolist())
         # self.wfile.write(serialised_result.encode())
-        print("result", result)
+        print("result", result_dict)
 
-        data_share = os.environ["DATA_SHARE_PATH"]
-        relative_save_path = "{}-segmentation.nii.gz".format(os.environ["LUNGMASK_HOSTNAME"])
-        save_path = os.path.join(data_share, relative_save_path)
-
-        print("saving np array to", save_path)
-        np.save(save_path, result)
-
-        print("sending over", relative_save_path)
-        self.wfile.write(relative_save_path.encode())
+        print("sending over", result_dict)
+        self.wfile.write(json.dumps(result_dict).encode())
 
 
 
@@ -84,17 +80,37 @@ def run_lungmask(param_dict):
     log_debug("Got model")
 
     input_image = utils.get_input_image(download_dir)
-    input_nda = sitk.GetArrayFromImage(input_image)
-    print(input_nda.shape)
-    zd, yd, xd = input_nda.shape
 
-    spx, spy, spz = input_image.GetSpacing()
-    result = lungmask.apply(input_image, model, force_cpu=False, batch_size=20, volume_postprocessing=False)
+    segmentation = lungmask.apply(input_image, model, force_cpu=False, batch_size=20, volume_postprocessing=False)
 
     log_debug("Got result")
-    log_debug(result)
+    log_debug(segmentation)
 
-    return result
+    result_dict = {}
+
+    # saving segmentation to file
+    data_share = os.environ["DATA_SHARE_PATH"]
+    rel_seg_save_path = "{}-segmentation".format(os.environ["LUNGMASK_HOSTNAME"])
+    seg_save_path = os.path.join(data_share, rel_seg_save_path)
+
+    print("saving np array to", seg_save_path)
+    np.save(seg_save_path, segmentation)
+
+    result_dict["segmentation"] = rel_seg_save_path + ".npy"
+
+    # saving input image as numpy array to file
+    input_nda = sitk.GetArrayFromImage(input_image)
+    rel_input_save_path = "{}-input-nda".format(os.environ["LUNGMASK_HOSTNAME"])
+    input_save_path = os.path.join(data_share, rel_input_save_path)
+    np.save(input_save_path, input_nda)
+
+    result_dict["input_nda"] = rel_input_save_path + ".npy"
+
+    # send input_image spacing
+    spx, spy, spz = input_image.GetSpacing()
+    result_dict["spacing"] = (spx, spy, spz)
+
+    return result_dict
 
 def setup_logging():
     file_handler = logging.FileHandler("log.log")

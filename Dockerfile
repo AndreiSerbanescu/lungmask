@@ -21,4 +21,5 @@ RUN python3 /app/load_models.py
 
 RUN pip3 install SimpleITK
 
+RUN apt-get install vim -y #debugging
 COPY start.py /app/start.py
