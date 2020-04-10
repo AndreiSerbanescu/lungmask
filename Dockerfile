@@ -23,3 +23,5 @@ RUN pip3 install SimpleITK
 
 RUN apt-get install vim -y #debugging
 COPY start.py /app/start.py
+RUN mkdir /app/common
+COPY common/* /app/common/
