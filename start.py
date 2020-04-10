@@ -10,6 +10,7 @@ from lungmask import utils
 import SimpleITK as sitk
 import numpy as np
 import json
+import time
 
 class CommandRequestHandler(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -89,8 +90,10 @@ def run_lungmask(param_dict):
 
     result_dict = {}
 
+    time_now = str(time.time())
+
     # saving segmentation to file
-    rel_seg_save_path = "{}-segmentation".format(os.environ["LUNGMASK_HOSTNAME"])
+    rel_seg_save_path = "{}-segmentation-{}".format(os.environ["LUNGMASK_HOSTNAME"], time_now)
     seg_save_path = os.path.join(data_share, rel_seg_save_path)
 
     print("saving np array to", seg_save_path)
@@ -100,7 +103,7 @@ def run_lungmask(param_dict):
 
     # saving input image as numpy array to file
     input_nda = sitk.GetArrayFromImage(input_image)
-    rel_input_save_path = "{}-input-nda".format(os.environ["LUNGMASK_HOSTNAME"])
+    rel_input_save_path = "{}-input-nda-{}".format(os.environ["LUNGMASK_HOSTNAME"], time_now)
     input_save_path = os.path.join(data_share, rel_input_save_path)
     np.save(input_save_path, input_nda)
 
