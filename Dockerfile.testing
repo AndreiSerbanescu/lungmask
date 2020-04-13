@@ -21,9 +21,12 @@ RUN python3 /app/load_models.py
 
 RUN pip3 install SimpleITK
 
+RUN pip3 install pytest
+RUN pip3 install mock
+
 RUN apt-get install vim -y #debugging
-COPY start.py /app/start.py
+COPY listen.py /app/listen.py
 RUN mkdir /app/common
 COPY common/* /app/common/
 
-COPY test.py /app/test.py
+COPY test /app/test

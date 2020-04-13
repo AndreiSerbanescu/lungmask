@@ -35,11 +35,22 @@ class CommandRequestHandler(BaseHTTPRequestHandler):
 
 
         log_debug("running {}".format(os.environ["HOSTNAME"]))
-        result_dict = self.__requested_method[parsed_url.path](parsed_params)
-        log_debug("result", result_dict)
 
-        log_debug("sending over", result_dict)
-        self.wfile.write(json.dumps(result_dict).encode())
+        try:
+            result_dict, success = self.__requested_method[parsed_url.path](parsed_params)
+
+            if not success:
+                # TODO send code 500
+                pass
+
+            log_debug("result", result_dict)
+
+            log_debug("sending over", result_dict)
+            self.wfile.write(json.dumps(result_dict).encode())
+
+        except:
+            # TODO send 500
+            pass
 
 
 class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):
