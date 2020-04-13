@@ -18,11 +18,18 @@ def run_lungmask(param_dict):
     log_debug("got model name {}".format(model_name))
     log_debug("got source dir {}".format(download_dir))
     log_debug("calling get model")
+
     model = lungmask.get_model('unet', model_name)
+
 
     log_debug("Got model")
     data_share = os.environ["DATA_SHARE_PATH"]
     abs_source_dir = os.path.join(data_share, download_dir)
+
+    if not os.path.exists(abs_source_dir):
+        log_debug("Input image source dir doesn't exist", abs_source_dir)
+        return {}, False
+
     input_image = utils.get_input_image(abs_source_dir)
 
     segmentation = lungmask.apply(input_image, model, force_cpu=False, batch_size=20, volume_postprocessing=False)
@@ -55,7 +62,7 @@ def run_lungmask(param_dict):
     spx, spy, spz = input_image.GetSpacing()
     result_dict["spacing"] = (spx, spy, spz)
 
-    return result_dict
+    return result_dict, True
 
 
 if __name__ == "__main__":
