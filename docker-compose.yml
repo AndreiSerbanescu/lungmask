@@ -6,4 +6,4 @@ services:
     hostname: lungmask
     ports:
       - "5001:5001"
-    command: python3 /app/start.py #tail -F anything
+    command: python3 /app/listen.py #tail -F anything
