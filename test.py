@@ -1,0 +1,2 @@
+
+print("Start testing lungmask")
