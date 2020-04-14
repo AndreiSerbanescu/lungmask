@@ -13,15 +13,20 @@ class CommandRequestHandler(BaseHTTPRequestHandler):
         self.__requested_method = served_requests
         super().__init__(*args, **kwargs)
 
-    def _set_headers(self):
-        self.send_response(200)
+    def _set_headers(self, response_code):
+        self.send_response(response_code)
         self.send_header("Content-type", "text")
         self.end_headers()
 
 
     def do_GET(self):
-        self._set_headers()
         self.__handle_request()
+
+    def send_answer(self, success, message):
+        response_code = 200 if success else 500
+
+        self._set_headers(response_code)
+        self.wfile.write(message.encode())
 
     def __handle_request(self):
         parsed_url = urlparse(self.path)
@@ -40,17 +45,18 @@ class CommandRequestHandler(BaseHTTPRequestHandler):
             result_dict, success = self.__requested_method[parsed_url.path](parsed_params)
 
             if not success:
-                # TODO send code 500
-                pass
+                self.send_answer(success=False, message="Worker could not finish computation")
 
             log_debug("result", result_dict)
 
             log_debug("sending over", result_dict)
-            self.wfile.write(json.dumps(result_dict).encode())
 
-        except:
-            # TODO send 500
-            pass
+            self.send_answer(success=True, message=json.dumps(result_dict))
+
+        except Exception as e:
+            self.send_answer(success=False, message="Error encountered {}".format(str(e)))
+
+
 
 
 class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):
