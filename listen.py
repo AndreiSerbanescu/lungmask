@@ -13,10 +13,14 @@ def run_lungmask(param_dict):
     print("### lungmask got parameters {}".format(param_dict))
 
     model_name   = param_dict["model_name"][0]
-    download_dir = param_dict["source_dir"][0]
+    rel_source_dir = param_dict["source_dir"][0]
+    # remove trailing / at the beggining of name
+    # otherwise os.path.join has unwanted behaviour for base dirs
+    # i.e. join(/app/data_share, /app/wrongpath) = /app/wrongpath
+    rel_source_dir = rel_source_dir.lstrip('/')
 
     log_debug("got model name {}".format(model_name))
-    log_debug("got source dir {}".format(download_dir))
+    log_debug("got source dir {}".format(rel_source_dir))
     log_debug("calling get model")
 
     model = lungmask.get_model('unet', model_name)
@@ -24,7 +28,7 @@ def run_lungmask(param_dict):
 
     log_debug("Got model")
     data_share = os.environ["DATA_SHARE_PATH"]
-    abs_source_dir = os.path.join(data_share, download_dir)
+    abs_source_dir = os.path.join(data_share, rel_source_dir)
 
     if not os.path.exists(abs_source_dir):
         log_debug("Input image source dir doesn't exist", abs_source_dir)
