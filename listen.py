@@ -62,10 +62,6 @@ def run_lungmask(param_dict):
 
     result_dict["input_nda"] = rel_input_save_path + ".npy"
 
-    # send input_image spacing
-    spx, spy, spz = input_image.GetSpacing()
-    result_dict["spacing"] = (spx, spy, spz)
-
     return result_dict, True
 
 
