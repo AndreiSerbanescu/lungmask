@@ -52,6 +52,7 @@ def run_lungmask(param_dict):
     rel_seg_save_path = os.path.join(lungmask_dir, f"{hostname}-segmentation-{time_now}.nii.gz")
     abs_seg_save_path = os.path.join(data_share, rel_seg_save_path)
     segmentation_nifti = sitk.GetImageFromArray(segmentation)
+    segmentation_nifti.SetSpacing(input_image.GetSpacing())
     sitk.WriteImage(segmentation_nifti, abs_seg_save_path)
 
     result_dict["segmentation"] = rel_seg_save_path
