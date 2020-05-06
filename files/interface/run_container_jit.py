@@ -1,7 +1,8 @@
 import os
 import glob
-from listen import run_lungmask_helper
+from listen import run_lungmask_absolute
 from common.utils import *
+import shutil
 
 setup_logging()
 
@@ -29,8 +30,8 @@ for batch_element_dir in batch_folders:
 
     try:
         param_dict, success = run_lungmask_absolute(abs_source_file)
-    except:
-        log_error(f"Segmentation failed for {element_input_dir}")
+    except Exception as e:
+        log_error(f"Segmentation failed for {element_input_dir} with exception {e}")
         continue
 
     if not success:
@@ -42,4 +43,4 @@ for batch_element_dir in batch_folders:
     full_segmentation_path = os.path.join(data_share, rel_segmentation_path)
 
     element_output_name = os.path.join(element_output_dir, "lungmask.nii.gz")
-    os.rename(full_segmentation_path, element_output_name)
+    shutil.copyfile(full_segmentation_path, element_output_name)
