@@ -23,19 +23,25 @@ def run_lungmask(param_dict):
     log_debug("got source dir {}".format(rel_source_dir))
     log_debug("calling get model")
 
-    model = lungmask.get_model('unet', model_name)
 
 
     log_debug("Got model")
     data_share = os.environ["DATA_SHARE_PATH"]
     abs_source_dir = os.path.join(data_share, rel_source_dir)
 
+    return run_lungmask_absolute(abs_source_dir, model_name=model_name)
+
+def run_lungmask_absolute(abs_source_dir, model_name='R231CovidWeb'):
+
+    data_share = os.environ["DATA_SHARE_PATH"]
+
+    model = lungmask.get_model('unet', model_name)
+
     if not os.path.exists(abs_source_dir):
         log_debug("Input image source dir doesn't exist", abs_source_dir)
         return {}, False
 
     input_image = utils.get_input_image(abs_source_dir)
-
     segmentation = lungmask.apply(input_image, model, force_cpu=False, batch_size=20, volume_postprocessing=False)
 
     log_debug("Got result")

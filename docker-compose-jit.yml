@@ -1,0 +1,14 @@
+version: '3'
+services:
+  lungmask:
+    build: ./
+    container_name: lungmask_jit
+    hostname: lungmask_jit
+    environment:
+      - WORKFLOW_DIR=/app/workflow
+      - BATCH_NAME=batch1
+      - OPERATOR_IN_DIR=input
+      - OPERATOR_OUT_DIR=output
+    command: python3 -u /app/run_container_jit.py
+    volumes:
+    - ./workflow:/app/workflow

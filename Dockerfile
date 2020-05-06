@@ -26,6 +26,7 @@ RUN python3 /app/load_models.py
 
 COPY files/interface/ /app/
 
-# COPY listen.py /app/listen.py
-# RUN mkdir /app/common
-# COPY common/* /app/common/
+RUN mkdir /app/data_share
+ENV DATA_SHARE_PATH /app/data_share
+
+CMD ["python3","-u","/app/run_container_jit.py"]
