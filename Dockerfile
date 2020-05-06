@@ -10,6 +10,7 @@ RUN pip3 install setuptools pip --upgrade --force-reinstall
 
 # Installing lungmask
 
+RUN pip3 install torch==1.4.0
 # this is for avoiding Unicode decode error for the pip3 command
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 RUN apt-get install -y locales && \
