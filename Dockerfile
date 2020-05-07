@@ -31,4 +31,4 @@ RUN mkdir /app/data_share
 ENV DATA_SHARE_PATH /app/data_share
 ENV LUNGMASK_HOSTNAME lungmask
 
-CMD ["python3","-u","/app/run_container_jit.py"]
+CMD ["python3","-u","/app/run_container_jip.py"]
