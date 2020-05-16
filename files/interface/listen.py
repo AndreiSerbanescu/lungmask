@@ -2,10 +2,9 @@ import os
 from lungmask import lungmask
 from lungmask import utils
 import SimpleITK as sitk
-import numpy as np
-import time
 from common.utils import *
 from common import listener_server
+from common import utils
 
 
 
@@ -52,10 +51,11 @@ def run_lungmask_absolute(abs_source_dir, model_name='R231CovidWeb'):
     lungmask_dir = "lungmask_output"
     os.makedirs(os.path.join(data_share, lungmask_dir), exist_ok=True)
 
-    time_now = str(time.time())
+    unique_id = utils.get_unique_id()
+
     hostname = os.environ["LUNGMASK_HOSTNAME"]
 
-    rel_seg_save_path = os.path.join(lungmask_dir, f"{hostname}-segmentation-{time_now}.nii.gz")
+    rel_seg_save_path = os.path.join(lungmask_dir, f"{hostname}-segmentation-{unique_id}.nii.gz")
     abs_seg_save_path = os.path.join(data_share, rel_seg_save_path)
     segmentation_nifti = sitk.GetImageFromArray(segmentation)
     segmentation_nifti.SetSpacing(input_image.GetSpacing())
@@ -63,7 +63,7 @@ def run_lungmask_absolute(abs_source_dir, model_name='R231CovidWeb'):
 
     result_dict["segmentation"] = rel_seg_save_path
 
-    rel_input_save_path = os.path.join(lungmask_dir, f"{hostname}-input-{time_now}.nii.gz")
+    rel_input_save_path = os.path.join(lungmask_dir, f"{hostname}-input-{unique_id}.nii.gz")
     abs_input_save_path = os.path.join(data_share, rel_input_save_path)
 
     sitk.WriteImage(input_image, abs_input_save_path)
