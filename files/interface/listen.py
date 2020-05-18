@@ -4,7 +4,7 @@ from lungmask import utils
 import SimpleITK as sitk
 from common.utils import *
 from common import listener_server
-from common import utils
+from common import utils as cutils
 
 
 
@@ -51,7 +51,7 @@ def run_lungmask_absolute(abs_source_dir, model_name='R231CovidWeb'):
     lungmask_dir = "lungmask_output"
     os.makedirs(os.path.join(data_share, lungmask_dir), exist_ok=True)
 
-    unique_id = utils.get_unique_id()
+    unique_id = cutils.get_unique_id()
 
     hostname = os.environ["LUNGMASK_HOSTNAME"]
 
