@@ -228,11 +228,11 @@ def test_run_lungmask_sends_success_false_when_input_image_doesnt_exist(mock_lun
 @mock.patch('lungmask.lungmask.get_model')
 @mock.patch('lungmask.lungmask.apply')
 @mock.patch('lungmask.utils.get_input_image')
-def test_run_lungmask_result_dictionary_contains_segmentation_input_nda_and_spacing(mock_lungmask_get_input_image,
-                                                                                    mock_lungmask_apply,
-                                                                                    mock_lungmask_get_model, mock_time,
-                                                                                    mock_np_save,
-                                                                                    mock_sitk_get_array_from_image):
+def test_run_lungmask_result_dictionary_contains_segmentation_and_input(mock_lungmask_get_input_image,
+                                                                        mock_lungmask_apply,
+                                                                        mock_lungmask_get_model, mock_time,
+                                                                        mock_np_save,
+                                                                        mock_sitk_get_array_from_image):
     def mock_exists(*args, **kwargs):
         return True
     os.path.exists = mock_exists
@@ -261,5 +261,4 @@ def test_run_lungmask_result_dictionary_contains_segmentation_input_nda_and_spac
 
     assert success
     assert "segmentation" in result_dict
-    assert "input_nda" in result_dict
-    assert "spacing" in result_dict
+    assert "input" in result_dict
