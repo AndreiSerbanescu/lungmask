@@ -62,14 +62,6 @@ def run_lungmask_absolute(abs_source_dir, model_name='R231CovidWeb'):
     sitk.WriteImage(segmentation_nifti, abs_seg_save_path)
 
     result_dict["segmentation"] = rel_seg_save_path
-
-    rel_input_save_path = os.path.join(lungmask_dir, f"{hostname}-input-{unique_id}.nii.gz")
-    abs_input_save_path = os.path.join(data_share, rel_input_save_path)
-
-    sitk.WriteImage(input_image, abs_input_save_path)
-
-    result_dict["input"] = rel_input_save_path
-
     return result_dict, True
 
 
